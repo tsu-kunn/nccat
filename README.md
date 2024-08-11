@@ -21,6 +21,8 @@ Linux環境でC#と.NET8の勉強を兼ねて欲しいツールを作成。 \
       - [c#コンソールアプリケーションで標準エラー出力に色を付ける方法](https://qiita.com/rougemeilland/items/9f272db7e0252c2f48d3) より、ANSIエスケープコードを使用するのがよさそう。
 - [ ] パイプラインの対応方法
   - 入力と出力の対応方法
+    - 標準入力からかの確認は [Console.IsInputRedirected](https://learn.microsoft.com/en-us/dotnet/api/system.console.isinputredirected?view=netframework-4.8#System_Console_IsInputRedirected) でできる？
+    - 標準入力の取得は `Console.In` でできそう
   - batはファイルの指定がない場合はパイプライン処理としている
     - `$ batcat` と実行すると入力待ちとなるので、自分のやりたいこととはちょっと違う結果になる
 - [ ] 同じ処理の共通化
