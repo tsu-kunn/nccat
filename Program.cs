@@ -21,6 +21,23 @@ namespace pict2png {
         {
             AppMain app = new AppMain();
             app.Run();
+
+            if (Console.IsInputRedirected)
+            {
+                Console.WriteLine("リダイレクトからの入力");
+                
+                TextReader textReader = Console.In;
+                string? line;
+
+                while ((line = textReader.ReadLine()) != null)
+                {
+                    Console.WriteLine(line);
+                }
+            }
+            else
+            {
+                Console.WriteLine("通常の入力");
+            }
         }
     }
 }
