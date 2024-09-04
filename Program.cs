@@ -3,19 +3,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 
 
-namespace pict2png {
-    public class baseKeyword
-    {
-        private string[]? _keyword;
-        public string[]? keyword { get; set; }
-
-        private string[]? _control;
-        public string[]? control { get; set; }
-
-        private string[]? _comment;
-        public string[]? comment { get; set; }
-    }
-
+namespace nccat {
     public class AppMain()
     {
         private void HelloWorld()
@@ -42,12 +30,12 @@ namespace pict2png {
             return options;
         }
 
-        public static baseKeyword? JsonTobaseKeyword(string json)
+        public static BaseKeyword.baseKeyword? JsonTobaseKeyword(string json)
         {
             if (!String.IsNullOrEmpty(json))
             {
                 try {
-                    baseKeyword? bkey = JsonSerializer.Deserialize<baseKeyword>(json, Program.GetOption());
+                    BaseKeyword.baseKeyword? bkey = JsonSerializer.Deserialize<BaseKeyword.baseKeyword>(json, Program.GetOption());
                     return bkey;
                 }
                 catch (JsonException e)
@@ -85,21 +73,23 @@ namespace pict2png {
                 Console.WriteLine("通常の入力");
                 Console.Write(MtoLib.ConsoleColorExtensions.ToForeGroundColorAnsiEscapeCode((ConsoleColor)(-1)));
 
-                string path = args[0];
+                if (args.Length > 0) {
+                    string path = args[0];
 
-                using (StreamReader sr = new StreamReader(path))
-                {
-                    while ((line = sr.ReadLine()) != null)
+                    using (StreamReader sr = new StreamReader(path))
                     {
-                        Console.WriteLine("{0, -5}: {1}", lineNum, line);
-                        lineNum++;
+                        while ((line = sr.ReadLine()) != null)
+                        {
+                            Console.WriteLine("{0, -5}: {1}", lineNum, line);
+                            lineNum++;
+                        }
                     }
                 }
 
                 // クラスオブジェクトをJsonに変換
-                baseKeyword keyC = new baseKeyword {
+                BaseKeyword.baseKeyword keyC = new BaseKeyword.baseKeyword {
                     keyword = new string[] {"char", "short", "int", "long"},
-                    control = new string[] {"define", "ifdef", "endif"},
+                    preprocessor = new string[] {"define", "ifdef", "endif"},
                     comment = new string[] {"日本語テスト", "🎮"}
                 };
 
@@ -115,7 +105,7 @@ namespace pict2png {
                         ""int"",
                         ""long""
                     ],
-                    ""control"": [
+                    ""preprocessor"": [
                         ""define"",
                         ""ifdef"",
                         ""endif""
@@ -126,7 +116,12 @@ namespace pict2png {
                     ]
                 }";
 
-                baseKeyword? keyCpp = JsonTobaseKeyword(baseText);
+                //BaseKeyword.C cword = new BaseKeyword.C();
+                //if (cword.word == null) Console.WriteLine("cword is null");
+                if (BaseKeyword.C.word == null) Console.WriteLine("cwod is null");
+
+                BaseKeyword.baseKeyword? keyCpp = JsonTobaseKeyword(BaseKeyword.C.word == null ? baseText : BaseKeyword.C.word);
+
                 if (keyCpp != null) {
                     if (keyCpp.keyword != null)
                     {
@@ -137,10 +132,10 @@ namespace pict2png {
                         }
                     }
 
-                    if (keyCpp.control != null)
+                    if (keyCpp.preprocessor != null)
                     {
-                        Console.WriteLine("control->");
-                        foreach(string s in keyCpp.control)
+                        Console.WriteLine("preprocessor->");
+                        foreach(string s in keyCpp.preprocessor)
                         {
                             Console.WriteLine(s);
                         }
