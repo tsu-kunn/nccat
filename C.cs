@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace nccat.BaseKeyword {
     public class C {
-        static public string? word { get; } = @"
+        static public string json { get; } = @"
         {
             ""keyword"": [
                 ""char"",
@@ -24,31 +24,25 @@ namespace nccat.BaseKeyword {
         }";
 
 
-/*
-        public baseKeyword? word { get; }
+        static public BaseKeyword word { get; } = new BaseKeyword {
+            keyword = new string[] {
+                "char",
+                "short",
+                "int",
+                "long"
+            },
 
-        public C() {
-            _word = new baseKeyword {
-                keyword = new string[] {
-                    "char",
-                    "short",
-                    "int",
-                    "long"
-                },
+            preprocessor = new string[] {
+                "define",
+                "ifdef",
+                "endif"
+            },
 
-                preprocessor = new string[] {
-                    "define",
-                    "ifdef",
-                    "endif"
-                },
-
-                comment = new string[] {
-                    "日本語テスト",
-                    "🎮"
-                }
-            };
-        }
-*/
+            comment = new string[] {
+                "日本語テスト",
+                "🎮"
+            }
+        };
     }
 }
 
