@@ -25,7 +25,7 @@ namespace nccat.BaseKeyword {
             return options;
         }
 
-        public static string? KeywordToJson(BaseKeyword keyword)
+        public static string? BaseKeywordToJson(BaseKeyword keyword)
         {
             if (keyword != null)
             {

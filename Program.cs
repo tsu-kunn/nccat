@@ -59,7 +59,7 @@ namespace nccat {
                 }
 
                 // クラスオブジェクトをJsonに変換
-                var jsonText = BaseKeyword.Json.KeywordToJson(BaseKeyword.C.word);
+                var jsonText = BaseKeyword.Json.BaseKeywordToJson(BaseKeyword.C.word);
                 Console.WriteLine(jsonText);
 
                 // Jsonからクラスオブジェクトに変換
