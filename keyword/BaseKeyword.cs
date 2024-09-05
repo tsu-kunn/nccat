@@ -8,6 +8,7 @@ namespace nccat.BaseKeyword {
     {
         public string[]? keyword { get; set; }
         public string[]? preprocessor { get; set; }
+        public string[]? specific { get; set; }
         public string[]? comment { get; set; }
     }
 

@@ -84,6 +84,15 @@ namespace nccat {
                         }
                     }
 
+                    if (keyCpp.specific != null)
+                    {
+                        Console.WriteLine("specific->");
+                        foreach(string s in keyCpp.specific)
+                        {
+                            Console.WriteLine(s);
+                        }
+                    }
+
                     if (keyCpp.comment != null)
                     {
                         Console.WriteLine("comment->");
