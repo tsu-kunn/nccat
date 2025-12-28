@@ -48,6 +48,7 @@ namespace nccat.BaseKeyword {
             ""preprocessor"": [
                 ""#define"",
                 ""#elif"",
+                ""#else"",
                 ""#endif"",
                 ""#error"",
                 ""#if"",
@@ -104,120 +105,9 @@ namespace nccat.BaseKeyword {
                 ""__VA_ARGS__""
             ],
             ""comment"": [
-                ""//"",
-                ""/*"",
-                ""*/""
+                ""//""
             ]
         }";
-
-
-        static public BaseKeyword word { get; } = new BaseKeyword {
-            keyword = new string[] {
-                "auto",
-                "bool",
-                "break",
-                "case",
-                "char",
-                "const",
-                "continue",
-                "defalut",
-                "do",
-                "double",
-                "else",
-                "enum",
-                "extern",
-                "false",
-                "float",
-                "for",
-                "goto",
-                "if",
-                "inline",
-                "int",
-                "long",
-                "register",
-                "restrict",
-                "return",
-                "short",
-                "signed",
-                "sizeof",
-                "static",
-                "struct",
-                "switch",
-                "true",
-                "typedef",
-                "union",
-                "unsigned",
-                "void",
-                "volatile",
-                "while"
-            },
-
-            preprocessor = new string[] {
-                "#define",
-                "#elif",
-                "#endif",
-                "#error",
-                "#if",
-                "#ifdef",
-                "#ifndef",
-                "#import",
-                "#include",
-                "#line",
-                "#pragma",
-                "#undef",
-                "defined"
-            },
-
-            specific = new string[] {
-                "_asm",
-                "__asm",
-                "_based",
-                "__based",
-                "cdecl",
-                "_cdecl",
-                "__cdecl",
-                "_declspec",
-                "__declspec",
-                "dllexport",
-                "dllimport",
-                "_except",
-                "__except",
-                "_fastcall",
-                "__fastcall",
-                "_finally",
-                "__finally",
-                "__func__",
-                "_inline",
-                "__inline",
-                "_int8",
-                "__int8",
-                "_int16",
-                "__int16",
-                "_int32",
-                "__int32",
-                "_int64",
-                "__int64",
-                "_leave",
-                "__leave",
-                "naked",
-                "_stdcall",
-                "__stdcall",
-                "thread",
-                "_try",
-                "__try",
-                "__DATE__",
-                "__FILE__",
-                "__LINE__",
-                "__TIME__",
-                "__VA_ARGS__"
-            },
-
-            comment = new string[] {
-                "//",
-                "/*",
-                "*/"
-            }
-        };
     }
 }
 
