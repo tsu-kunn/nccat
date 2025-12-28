@@ -64,7 +64,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/home/raspi/.dotnet/sdk/8.0.303/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/home/raspi/.dotnet/sdk/8.0.407/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
