@@ -42,7 +42,7 @@ namespace nccat.BaseKeyword {
                 ""final"",
                 ""finally"",
                 ""float"",
-                ""for"".
+                ""for"",
                 ""friend"",
                 ""goto"",
                 ""if"",

@@ -127,6 +127,13 @@ namespace nccat.BaseKeyword {
                 ""#warning""
             ],
             ""specific"": [
+                ""get"",
+                ""set"",
+                ""add"",
+                ""remove"",
+                ""value"",
+                ""nameof"",
+                ""when""
             ],
             ""comment"": [
                 ""//""

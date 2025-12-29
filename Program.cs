@@ -9,7 +9,7 @@ using nccat.BaseKeyword;
 
 namespace nccat
 {
-    // ハイライトのルール（パターン、色、優先順位）を保持するクラス
+    // ... (HighlightRule and MatchResult classes remain the same)
     class HighlightRule
     {
         public Regex Pattern { get; }
@@ -24,7 +24,6 @@ namespace nccat
         }
     }
 
-    // マッチした結果を保持するクラス
     class MatchResult : IComparable<MatchResult>
     {
         public int Index { get; }
@@ -54,7 +53,8 @@ namespace nccat
         // 通常のテキスト（ブロックコメント以外）をハイライトするメソッド
         private static string HighlightText(string text, List<HighlightRule> rules)
         {
-            if (string.IsNullOrEmpty(text)) return string.Empty;
+            // (This method remains the same as before)
+            if (string.IsNullOrEmpty(text) || !rules.Any()) return text;
 
             var allMatches = new List<MatchResult>();
             foreach (var rule in rules)
@@ -62,12 +62,9 @@ namespace nccat
                 foreach (Match match in rule.Pattern.Matches(text))
                 {
                     if (match.Success && match.Length > 0)
-                    {
                         allMatches.Add(new MatchResult(match.Index, match.Length, rule.Color, rule.Priority));
-                    }
                 }
             }
-
             allMatches.Sort();
 
             var finalMatches = new List<MatchResult>();
@@ -85,22 +82,66 @@ namespace nccat
             int currentPos = 0;
             foreach (var match in finalMatches)
             {
-                if (match.Index > currentPos)
-                {
-                    sb.Append(text.Substring(currentPos, match.Index - currentPos));
-                }
+                if (match.Index > currentPos) sb.Append(text.Substring(currentPos, match.Index - currentPos));
                 sb.Append(ConsoleColorExtensions.ToForeGroundColorAnsiEscapeCode(match.Color));
                 sb.Append(text.Substring(match.Index, match.Length));
                 sb.Append(ConsoleColorExtensions.ToForeGroundColorAnsiEscapeCode((ConsoleColor)(-1)));
                 currentPos = match.Index + match.Length;
             }
-
-            if (currentPos < text.Length)
-            {
-                sb.Append(text.Substring(currentPos));
-            }
+            if (currentPos < text.Length) sb.Append(text.Substring(currentPos));
 
             return sb.ToString();
+        }
+
+        // ファイルパスに応じてハイライトルールを取得するメソッド
+        private static List<HighlightRule> GetRulesForFile(string? path)
+        {
+            var rules = new List<HighlightRule>();
+            string? json = null;
+
+            if (!string.IsNullOrEmpty(path))
+            {
+                string extension = Path.GetExtension(path).ToLower();
+                switch (extension)
+                {
+                    case ".c":
+                    case ".h":
+                        json = C.json; break;
+                    case ".cpp":
+                    case ".hpp":
+                    case ".cc":
+                        json = Cpp.json; break;
+                    case ".cs":
+                        json = Csharp.json; break;
+                }
+            }
+            
+            if (string.IsNullOrEmpty(json)) return rules;
+
+            BaseKeyword.BaseKeyword? syntaxRules = Json.JsonToBaseKeyword(json);
+            if (syntaxRules == null) return rules;
+
+            // --- ルールリストの構築 ---
+            // 文字列 "" のルールはメインのステートマシンで処理するため、ここでは定義しない
+            rules.Add(new HighlightRule(@"(//.*)", ConsoleColor.Green, 1));
+            
+            if (syntaxRules.specific != null && syntaxRules.specific.Any())
+            {
+                var pattern = @"\b(" + string.Join("|", syntaxRules.specific.OrderByDescending(s => s.Length).Select(Regex.Escape)) + @")\b";
+                rules.Add(new HighlightRule(pattern, ConsoleColor.Yellow, 2));
+            }
+            if (syntaxRules.preprocessor != null && syntaxRules.preprocessor.Any())
+            {
+                var pattern = "(" + string.Join("|", syntaxRules.preprocessor.OrderByDescending(s => s.Length).Select(Regex.Escape)) + ")";
+                rules.Add(new HighlightRule(pattern, ConsoleColor.Magenta, 3));
+            }
+            if (syntaxRules.keyword != null && syntaxRules.keyword.Any())
+            {
+                var pattern = @"\b(" + string.Join("|", syntaxRules.keyword.OrderByDescending(s => s.Length).Select(Regex.Escape)) + @")\b";
+                rules.Add(new HighlightRule(pattern, ConsoleColor.Cyan, 4));
+            }
+
+            return rules;
         }
 
         static void Main(string[] args)
@@ -112,46 +153,22 @@ namespace nccat
                 return;
             }
 
-            // --- ハイライトルールの定義 ---
-            BaseKeyword.BaseKeyword? syntaxRules = Json.JsonToBaseKeyword(C.json);
-            if (syntaxRules == null) { /* ... error handling ... */ return; }
+            string? filePath = args.Length > 0 ? args[0] : null;
+            List<HighlightRule> rules = GetRulesForFile(filePath);
 
-            var rules = new List<HighlightRule>();
-            rules.Add(new HighlightRule(@"(\""[^\n]*?\"")", ConsoleColor.DarkYellow, 1)); // 1: 文字列
-            rules.Add(new HighlightRule(@"(//.*)", ConsoleColor.Green, 1));             // 1: 単一行コメント
-            if (syntaxRules.specific != null) { /* ... add rule ... */ }
-            if (syntaxRules.preprocessor != null) { /* ... add rule ... */ }
-            if (syntaxRules.keyword != null && syntaxRules.keyword.Any())
-            {
-                var pattern = @"\b(" + string.Join("|", syntaxRules.keyword.OrderByDescending(s => s.Length).Select(Regex.Escape)) + @")\b";
-                rules.Add(new HighlightRule(pattern, ConsoleColor.Cyan, 4));
-            }
-            if (syntaxRules.preprocessor != null && syntaxRules.preprocessor.Any())
-            {
-                var pattern = "(" + string.Join("|", syntaxRules.preprocessor.OrderByDescending(s => s.Length).Select(Regex.Escape)) + ")";
-                rules.Add(new HighlightRule(pattern, ConsoleColor.Magenta, 3));
-            }
-             if (syntaxRules.specific != null && syntaxRules.specific.Any())
-            {
-                var pattern = @"\b(" + string.Join("|", syntaxRules.specific.OrderByDescending(s => s.Length).Select(Regex.Escape)) + @")\b";
-                rules.Add(new HighlightRule(pattern, ConsoleColor.Yellow, 2));
-            }
-
-
-            // --- メイン処理 ---
             Action<TextReader> processContent = (reader) =>
             {
                 int lineNum = 1;
                 string? line;
                 bool inBlockComment = false;
                 var blockCommentColor = ConsoleColor.Green;
+                var stringColor = ConsoleColor.DarkYellow;
                 var resetColor = ConsoleColorExtensions.ToForeGroundColorAnsiEscapeCode((ConsoleColor)(-1));
 
                 while ((line = reader.ReadLine()) != null)
                 {
                     var sb = new StringBuilder();
                     int currentPos = 0;
-                    
                     sb.AppendFormat("{0, -5}: ", lineNum++);
 
                     while (currentPos < line.Length)
@@ -178,17 +195,49 @@ namespace nccat
                         }
                         else
                         {
-                            int startIndex = line.IndexOf("/*", currentPos);
-                            if (startIndex == -1)
+                            int commentIndex = line.IndexOf("/*", currentPos);
+                            int quoteIndex = line.IndexOf('"', currentPos);
+
+                            if (quoteIndex != -1 && (quoteIndex < commentIndex || commentIndex == -1))
                             {
-                                sb.Append(HighlightText(line.Substring(currentPos), rules));
-                                currentPos = line.Length;
+                                // 文字列がコメントより先に見つかった
+                                sb.Append(HighlightText(line.Substring(currentPos, quoteIndex - currentPos), rules));
+                                
+                                int endQuoteIndex = quoteIndex + 1;
+                                while (endQuoteIndex < line.Length)
+                                {
+                                    if (line[endQuoteIndex] == '"' && line[endQuoteIndex - 1] != '\\') break;
+                                    endQuoteIndex++;
+                                }
+
+                                if (endQuoteIndex < line.Length)
+                                {
+                                    int length = (endQuoteIndex + 1) - quoteIndex;
+                                    sb.Append(ConsoleColorExtensions.ToForeGroundColorAnsiEscapeCode(stringColor));
+                                    sb.Append(line.Substring(quoteIndex, length));
+                                    sb.Append(resetColor);
+                                    currentPos = endQuoteIndex + 1;
+                                }
+                                else
+                                {
+                                    sb.Append(ConsoleColorExtensions.ToForeGroundColorAnsiEscapeCode(stringColor));
+                                    sb.Append(line.Substring(quoteIndex));
+                                    sb.Append(resetColor);
+                                    currentPos = line.Length;
+                                }
+                            }
+                            else if (commentIndex != -1)
+                            {
+                                // コメントが文字列より先に見つかった
+                                sb.Append(HighlightText(line.Substring(currentPos, commentIndex - currentPos), rules));
+                                currentPos = commentIndex;
+                                inBlockComment = true;
                             }
                             else
                             {
-                                sb.Append(HighlightText(line.Substring(currentPos, startIndex - currentPos), rules));
-                                currentPos = startIndex;
-                                inBlockComment = true;
+                                // コメントも文字列も見つからなかった
+                                sb.Append(HighlightText(line.Substring(currentPos), rules));
+                                currentPos = line.Length;
                             }
                         }
                     }
@@ -202,13 +251,12 @@ namespace nccat
             }
             else
             {
-                string path = args[0];
-                if (!File.Exists(path))
+                if (!File.Exists(filePath))
                 {
-                    Console.WriteLine($"Error: File not found at '{path}'");
+                    Console.WriteLine($"Error: File not found at '{filePath}'");
                     return;
                 }
-                using (StreamReader sr = new StreamReader(path))
+                using (StreamReader sr = new StreamReader(filePath!))
                 {
                     processContent(sr);
                 }
@@ -216,4 +264,3 @@ namespace nccat
         }
     }
 }
-
