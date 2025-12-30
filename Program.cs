@@ -115,6 +115,8 @@ namespace nccat
                         json = Csharp.json; break;
                     case ".rs":
                         json = Rust.json; break;
+                    case ".js":
+                        json = JavaScript.json; break;
                 }
             }
             
