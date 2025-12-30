@@ -113,6 +113,8 @@ namespace nccat
                         json = Cpp.json; break;
                     case ".cs":
                         json = Csharp.json; break;
+                    case ".rs":
+                        json = Rust.json; break;
                 }
             }
             
