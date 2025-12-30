@@ -106,17 +106,22 @@ namespace nccat
                 {
                     case ".c":
                     case ".h":
-                        json = C.json; break;
+                        json = C.json;
+                        break;
                     case ".cpp":
                     case ".hpp":
                     case ".cc":
-                        json = Cpp.json; break;
+                        json = Cpp.json;
+                        break;
                     case ".cs":
-                        json = Csharp.json; break;
+                        json = Csharp.json;
+                        break;
                     case ".rs":
-                        json = Rust.json; break;
+                        json = Rust.json;
+                        break;
                     case ".js":
-                        json = JavaScript.json; break;
+                        json = JavaScript.json;
+                        break;
                 }
             }
             
@@ -173,7 +178,7 @@ namespace nccat
                 {
                     var sb = new StringBuilder();
                     int currentPos = 0;
-                    sb.AppendFormat("{0, -5}: ", lineNum++);
+                    sb.AppendFormat("{0, 5}: ", lineNum++);
 
                     while (currentPos < line.Length)
                     {
