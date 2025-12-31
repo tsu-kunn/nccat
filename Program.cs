@@ -122,6 +122,9 @@ namespace nccat
                     case ".js":
                         json = JavaScript.json;
                         break;
+                    case ".rb":
+                        json = Ruby.json;
+                        break;
                 }
             }
             
@@ -132,7 +135,15 @@ namespace nccat
 
             // --- ルールリストの構築 ---
             // 文字列 "" のルールはメインのステートマシンで処理するため、ここでは定義しない
-            rules.Add(new HighlightRule(@"(//.*)", ConsoleColor.Green, 1));
+            
+            // 単一行コメントのルールを動的に生成する
+            if (syntaxRules.comment != null && syntaxRules.comment.Any())
+            {
+                // コメント文字を | で連結したパターンを作成 (例: #|// )
+                string commentChars = string.Join("|", syntaxRules.comment.Select(Regex.Escape));
+                string pattern = $"({commentChars}).*";
+                rules.Add(new HighlightRule(pattern, ConsoleColor.Green, 1));
+            }
             
             if (syntaxRules.specific != null && syntaxRules.specific.Any())
             {
