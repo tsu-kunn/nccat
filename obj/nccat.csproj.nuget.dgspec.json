@@ -60,6 +60,11 @@
           },
           "runtimeIdentifierGraphPath": "/home/raspi/.dotnet/sdk/8.0.407/PortableRuntimeIdentifierGraph.json"
         }
+      },
+      "runtimes": {
+        "linux-arm64": {
+          "#import": []
+        }
       }
     }
   }
